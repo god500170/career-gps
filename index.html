@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Career GPS | 나의 진로 경로 탐색</title>
+<meta name="theme-color" content="#3156d3" />
+<style>
+  :root{
+    --bg:#f5f7fb;--card:#ffffff;--ink:#172033;--muted:#65708a;--line:#dfe5f0;
+    --primary:#3156d3;--primary2:#6b7ff2;--accent:#10a58a;--warn:#b87416;--danger:#c33d53;
+    --soft:#eef2ff;--soft2:#e9fbf6;--shadow:0 16px 40px rgba(31,43,76,.10);
+    --radius:22px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Pretendard,"Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif;background:linear-gradient(180deg,#eef2ff 0,#f7f9fc 280px,#f5f7fb 100%);color:var(--ink)}
+  button,input,select,textarea{font:inherit}
+  a{color:inherit}
+  .shell{max-width:1120px;margin:auto;padding:24px}
+  .topbar{display:flex;align-items:center;gap:14px;justify-content:space-between;padding:8px 0 18px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.03em}
+  .brand-badge{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--primary2));display:grid;place-items:center;color:white;box-shadow:var(--shadow)}
+  .brand small{display:block;color:var(--muted);font-weight:600;font-size:12px;letter-spacing:0}
+  .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .btn{border:0;border-radius:13px;padding:11px 15px;background:#fff;color:var(--ink);cursor:pointer;font-weight:750;box-shadow:0 2px 0 rgba(17,31,68,.05);border:1px solid var(--line)}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .btn.soft{background:var(--soft);color:#2945af;border-color:#d7defb}
+  .btn.green{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.danger{background:#fff1f3;color:var(--danger);border-color:#ffd4dc}
+  .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+  .hero{background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.9);border-radius:28px;padding:42px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-70px;top:-100px;background:radial-gradient(circle,#dfe6ff,#eef2ff 60%,transparent 61%)}
+  .eyebrow{font-size:13px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase}
+  h1{font-size:clamp(34px,6vw,62px);line-height:1.02;margin:12px 0 16px;letter-spacing:-.055em}
+  h2{font-size:28px;letter-spacing:-.04em;margin:0 0 10px}
+  h3{font-size:18px;letter-spacing:-.03em;margin:0 0 8px}
+  p{line-height:1.7;margin:8px 0;color:#34405a}
+  .hero-copy{max-width:720px;position:relative;z-index:2}
+  .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;position:relative;z-index:2}
+  .mode-card{padding:24px;border-radius:20px;border:1px solid var(--line);background:white;cursor:pointer;text-align:left}
+  .mode-card:hover{border-color:#aebcff;box-shadow:0 10px 30px rgba(49,86,211,.11)}
+  .mode-icon{font-size:34px;margin-bottom:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:0 8px 28px rgba(31,43,76,.06)}
+  .hidden{display:none!important}
+  .progress-wrap{background:white;border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:16px;box-shadow:0 6px 20px rgba(31,43,76,.05)}
+  .progress-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;font-size:13px;font-weight:800;color:var(--muted)}
+  .progress{height:9px;background:#edf0f6;border-radius:999px;overflow:hidden}
+  .progress>div{height:100%;background:linear-gradient(90deg,var(--primary),#7c8bf4);border-radius:999px;transition:width .25s}
+  .step-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
+  .step-badge{display:inline-flex;gap:8px;align-items:center;background:var(--soft);color:#2d47a8;border-radius:999px;padding:7px 11px;font-weight:900;font-size:12px;margin-bottom:8px}
+  .time-chip{white-space:nowrap;border-radius:999px;background:#f2f5f9;color:var(--muted);padding:7px 10px;font-size:12px;font-weight:800}
+  .notice{padding:14px 16px;border-radius:15px;background:#f7f9ff;border:1px solid #dfe5ff;color:#3a4668;font-size:14px;line-height:1.6;margin:14px 0}
+  .notice.green{background:var(--soft2);border-color:#c9efe5}
+  .notice.warn{background:#fff8eb;border-color:#f5dfb7}
+  .field{margin:18px 0}
+  .field label{display:block;font-weight:850;margin-bottom:8px;letter-spacing:-.02em}
+  .help{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.55}
+  input[type=text], input[type=number], select, textarea{width:100%;border:1px solid #ccd5e3;background:#fff;border-radius:13px;padding:12px 13px;color:var(--ink);outline:none}
+  input:focus,select:focus,textarea:focus{border-color:#8094f0;box-shadow:0 0 0 4px rgba(49,86,211,.08)}
+  textarea{min-height:92px;resize:vertical;line-height:1.6}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .choice{position:relative}
+  .choice input{position:absolute;opacity:0;pointer-events:none}
+  .choice label{display:block;border:1px solid var(--line);border-radius:14px;padding:13px 14px;background:#fff;cursor:pointer;font-weight:730}
+  .choice label small{display:block;color:var(--muted);font-weight:550;margin-top:4px}
+  .choice input:checked+label{border-color:#758bf0;background:#f0f3ff;box-shadow:0 0 0 3px rgba(49,86,211,.07)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;cursor:pointer;font-weight:720;color:#34405a}
+  .chip.selected{background:var(--soft);border-color:#aebcff;color:#2945af}
+  .nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+  .signal{background:linear-gradient(135deg,#192b67,#314fc5);color:white;border-radius:22px;padding:24px;position:relative;overflow:hidden}
+  .signal p{color:#dfe5ff}
+  .signal:after{content:"";position:absolute;right:-50px;bottom:-70px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.08)}
+  .signal-tags{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+  .signal-tag{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);padding:9px 11px;border-radius:999px;font-weight:800}
+  .route{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:18px 0}
+  .route span{padding:8px 11px;border-radius:999px;background:#f0f3f8;font-weight:800;font-size:13px}
+  .route b{color:#93a0b6}
+  .school-card{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fbfcfe}
+  .compare-table{width:100%;border-collapse:collapse;margin-top:12px}
+  .compare-table th,.compare-table td{border-bottom:1px solid var(--line);padding:12px;text-align:left;vertical-align:top}
+  .compare-table th{font-size:13px;color:var(--muted);width:22%}
+  .resource{display:flex;gap:12px;align-items:center;justify-content:space-between;background:#f7f9ff;border:1px solid #dfe5ff;padding:14px 16px;border-radius:16px;margin:12px 0}
+  .resource strong{display:block}
+  .resource small{color:var(--muted)}
+  .teacher-section{margin:20px 0;padding-top:20px;border-top:1px solid var(--line)}
+  .switch-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px dashed #e5e9f0}
+  .switch{width:48px;height:28px;border-radius:999px;background:#cbd3e0;padding:3px;cursor:pointer;transition:.2s;flex:0 0 auto}
+  .switch i{display:block;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.16)}
+  .switch.on{background:var(--primary)}
+  .switch.on i{transform:translateX(20px)}
+  .inline{display:flex;gap:10px;align-items:center}
+  .result-sheet{background:#fff;border:1px solid #cfd7e6;border-radius:20px;padding:28px;box-shadow:var(--shadow)}
+  .result-title{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;border-bottom:3px solid #223c9e;padding-bottom:18px;margin-bottom:18px}
+  .result-title h2{font-size:32px;margin:0}
+  .coord-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0 20px}
+  .coord{background:#f6f8fc;border:1px solid #e2e7f0;border-radius:14px;padding:12px;min-height:108px}
+  .coord b{font-size:13px;color:#516079}
+  .coord div{margin-top:8px;font-weight:780;line-height:1.45}
+  .path-line{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;margin:14px 0}
+  .path-icon{width:42px;height:42px;border-radius:13px;background:var(--soft);display:grid;place-items:center}
+  .gps-mascot{width:92px;height:92px;border:3px solid #223c9e;border-radius:50%;display:grid;place-items:center;position:relative;background:#f4f7ff;flex:0 0 auto}
+  .gps-mascot:before{content:"";width:8px;height:38px;background:#ef5b5b;border-radius:8px 8px 2px 2px;position:absolute;transform:translateY(-8px) rotate(35deg);transform-origin:bottom}
+  .gps-mascot:after{content:"GPS";position:absolute;bottom:13px;font-size:11px;font-weight:900;color:#223c9e;letter-spacing:1px}
+  .gps-face{font-size:27px;transform:translateY(4px)}
+  .quote{border-left:4px solid var(--primary);padding:8px 0 8px 14px;font-weight:800;font-size:17px;line-height:1.55}
+  .small{font-size:12px;color:var(--muted)}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#172033;color:#fff;padding:11px 15px;border-radius:999px;opacity:0;pointer-events:none;transition:.2s;z-index:20;font-size:13px}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .modal{position:fixed;inset:0;background:rgba(16,24,40,.52);display:grid;place-items:center;padding:20px;z-index:50}
+  .modal-box{max-width:560px;width:100%;background:#fff;border-radius:24px;padding:26px;box-shadow:0 28px 80px rgba(0,0,0,.25)}
+  .resume-summary{background:#f7f9fc;border:1px solid var(--line);border-radius:14px;padding:14px;margin:14px 0;color:#46516a}
+  .footer-note{text-align:center;color:var(--muted);font-size:12px;padding:22px 0 6px}
+  .error{color:var(--danger);font-size:13px;font-weight:700;margin-top:6px}
+  /* 모바일·태블릿 최적화 */
+  @media(max-width:760px){
+    body{background:linear-gradient(180deg,#eef2ff 0,#f7f9fc 220px,#f5f7fb 100%);padding-bottom:env(safe-area-inset-bottom)}
+    .shell{padding:12px max(12px,env(safe-area-inset-right)) 18px max(12px,env(safe-area-inset-left))}
+    .topbar{align-items:flex-start;flex-direction:column;gap:10px;padding-bottom:12px}
+    .brand{width:100%}.brand-badge{width:40px;height:40px;border-radius:12px}.brand small{font-size:11px}
+    .top-actions{width:100%;max-width:none;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .top-actions .btn,.top-actions label.btn{width:100%;text-align:center;padding:11px 8px;font-size:13px}
+    .top-actions .btn:last-child{grid-column:1/-1}
+    .hero{padding:24px 18px;border-radius:22px}
+    h1{font-size:38px} h2{font-size:24px;line-height:1.25} h3{font-size:17px}
+    p{line-height:1.62}
+    .mode-grid,.grid2,.grid3,.choice-grid,.coord-grid{grid-template-columns:1fr}
+    .mode-grid{gap:12px;margin-top:22px}.mode-card{padding:20px}
+    .card{padding:19px 16px;border-radius:18px}
+    .progress-wrap{position:sticky;top:0;z-index:10;border-radius:14px;padding:11px 12px;margin-bottom:10px}
+    .progress-row{font-size:12px}.step-head{flex-direction:column;gap:8px;margin-bottom:16px}.time-chip{align-self:flex-start}
+    .field{margin:15px 0}.field label{font-size:15px}
+    input[type=text],input[type=number],select,textarea{font-size:16px;min-height:48px;padding:12px 12px;border-radius:12px}
+    textarea{min-height:108px}
+    .choice label{padding:15px 14px;min-height:52px}
+    .btn{min-height:46px;padding:12px 14px;touch-action:manipulation}
+    .nav-row{position:sticky;bottom:0;z-index:9;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);margin:22px -16px -19px;padding:12px 16px max(12px,env(safe-area-inset-bottom));border-radius:0 0 18px 18px}
+    .nav-row .btn{flex:1}
+    .resource{align-items:flex-start;flex-direction:column}.resource .btn{width:100%}
+    .school-card{padding:15px}.compare-table{font-size:13px;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .inline{width:100%;flex-direction:column;align-items:stretch}.inline .btn{width:100%}
+    .result-title{flex-direction:column}.result-title h2{font-size:27px}.gps-mascot{width:80px;height:80px}
+    .result-sheet{padding:20px 16px;border-radius:16px}.path-line{grid-template-columns:38px 1fr;gap:10px}.path-icon{width:38px;height:38px}
+    .modal{padding:14px}.modal-box{padding:21px 17px;border-radius:20px}
+    .toast{bottom:max(18px,env(safe-area-inset-bottom));width:calc(100% - 28px);text-align:center;border-radius:14px}
+  }
+  @media(min-width:761px) and (max-width:980px){
+    .shell{padding:18px}.card{padding:22px}.coord-grid{grid-template-columns:repeat(3,1fr)}
+  }
+  /* PDF는 휴대폰에서도 동일한 A4 레이아웃으로 캡처 */
+  .result-sheet.pdf-export{width:900px!important;max-width:none!important;padding:28px!important;border-radius:20px!important}
+  .result-sheet.pdf-export .result-title{flex-direction:row!important}
+  .result-sheet.pdf-export .result-title h2{font-size:32px!important}
+  .result-sheet.pdf-export .coord-grid{grid-template-columns:repeat(5,1fr)!important}
+  .result-sheet.pdf-export .path-line{grid-template-columns:42px 1fr!important;gap:12px!important}
+  .result-sheet.pdf-export .path-icon{width:42px!important;height:42px!important}
+  @media print{
+    body{background:#fff}.shell{max-width:none;padding:0}.topbar,.progress-wrap,.no-print,.footer-note{display:none!important}.card{border:0;box-shadow:none;padding:0}.result-sheet{box-shadow:none;border:0;border-radius:0;padding:0}.coord-grid{grid-template-columns:repeat(5,1fr)}@page{size:A4;margin:12mm}
+  }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand"><div class="brand-badge">🧭</div><div>Career GPS<small>질문에서 출발해 나의 경로를 탐색하다</small></div></div>
+    <div class="top-actions no-print" id="globalActions">
+      <button class="btn" onclick="downloadStudentBackup()">💾 백업 저장</button>
+      <label class="btn" style="cursor:pointer">📂 백업 불러오기<input type="file" accept="application/json" style="display:none" onchange="importStudentBackup(event)"></label>
+      <button class="btn" onclick="goHome()">처음 화면</button>
+    </div>
+  </div>
+
+  <section id="home" class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">MY PATH · MY QUESTION · MY FUTURE</div>
+      <h1>나의 진로는<br>정답이 아니라 <span style="color:var(--primary)">경로</span>입니다.</h1>
+      <p>지금까지 발견한 나의 흥미·적성·가치·역량·강점을 연결해 직업과 고교, 학과를 탐색하고, 미래의 나에게 다시 질문해 봅니다.</p>
+      <div class="notice green">Career GPS는 직업을 판정하거나 미래를 예측하지 않습니다. <b>내가 탐색할 방향을 발견하고 스스로 선택하는 도구</b>입니다.</div>
+    </div>
+    <div class="mode-grid">
+      <button class="mode-card" onclick="startStudent()"><div class="mode-icon">🎒</div><h3>학생용 Career GPS</h3><p>나의 좌표를 입력하고 85분 동안 진로 경로를 탐색합니다.</p></button>
+      <button class="mode-card" onclick="openTeacher()"><div class="mode-icon">👩‍🏫</div><h3>교사용 설정</h3><p>지역·학교·수업시간·탐색 모듈과 지역 자료를 설정합니다.</p></button>
+    </div>
+  </section>
+
+  <div id="studentApp" class="hidden">
+    <div class="progress-wrap no-print">
+      <div class="progress-row"><span id="progressLabel">STEP 1 / 8</span><span id="autosaveState">자동저장됨</span></div>
+      <div class="progress"><div id="progressBar" style="width:12.5%"></div></div>
+    </div>
+    <section id="stepContainer" class="card"></section>
+  </div>
+
+  <section id="teacherApp" class="card hidden"></section>
+  <div class="footer-note">Career GPS · 학교 수업용 프로토타입 · 학생 입력정보는 기본적으로 이 브라우저에만 저장됩니다.</div>
+</div>
+<div id="toast" class="toast">저장되었습니다.</div>
+<div id="modalRoot"></div>
+
+<script>
+const CAREER_URL_DEFAULT='https://cyberjinro.ice.go.kr/';
+const MAJOR_URL_DEFAULT='https://www.career.go.kr/cnet/front/base/major/FunivMajor.do';
+const INCHEON_HS_URL_DEFAULT='https://isatp.ice.go.kr/intro1.do';
+const SCHOOLINFO_URL='https://www.schoolinfo.go.kr/Main.do';
+
+const INTERESTS=[
+ ['R','실재형(R)','도구·기계·신체 활동, 구체적인 문제 해결'],
+ ['I','탐구형(I)','분석·연구·실험, 원리와 이유 탐구'],
+ ['A','예술형(A)','창작·표현·디자인, 새로운 방식의 표현'],
+ ['S','사회형(S)','가르치기·돕기·소통, 사람과 함께하는 활동'],
+ ['E','기업형(E)','설득·기획·리더십, 목표를 향해 이끄는 활동'],
+ ['C','관습형(C)','정리·관리·계획, 정확하고 체계적인 활동']
+];
+const APTITUDES=['신체·운동능력','손재능','공간지각력','음악능력','창의력','언어능력','수리·논리력','자기성찰능력','대인관계능력','자연친화력','예술시각능력','자기관리능력'];
+const VALUES=[
+ ['사회봉사','다른 사람이나 사회에 도움이 되는 일'],['자아실현','나의 꿈과 목표를 이루며 성장할 수 있는 일'],['사회적 인정','능력과 성과를 인정받는 일'],['안정성·지속성','오래 안정적으로 일할 수 있는 것'],['흥미','내가 좋아하고 재미를 느끼는 일'],['적성','내가 잘하는 능력을 활용할 수 있는 일'],['보수','충분한 수입을 얻는 것'],['기타','기타']
+];
+const ENTRE=['혁신성','사회적 가치 지향','변화민첩성','성취지향성','위험감수역량','회복탄력성','자율성','자기관리역량','끈기','공동의사결정','자원연계역량','협력성'];
+
+const signalMaps={
+ R:['기술·제작','현장·안전','자연·환경'], I:['과학·연구','데이터·분석','의료·보건'], A:['콘텐츠·디자인','문화·예술','창작·미디어'], S:['교육·상담','보건·복지','소통·서비스'], E:['경영·기획','창업·마케팅','공공·리더십'], C:['행정·사무','금융·회계','정보관리']
+};
+const aptitudeMaps={
+ '신체·운동능력':['스포츠·안전','현장·서비스'],'손재능':['기술·제작','디자인·공예'],'공간지각력':['건축·공간','기술·설계'],'음악능력':['문화·예술','콘텐츠·미디어'],'창의력':['콘텐츠·디자인','창업·기획'],'언어능력':['교육·상담','콘텐츠·미디어'],'수리·논리력':['데이터·분석','과학·연구'],'자기성찰능력':['상담·심리','교육·성장'],'대인관계능력':['교육·상담','보건·복지'],'자연친화력':['자연·환경','생명·과학'],'예술시각능력':['콘텐츠·디자인','건축·공간'],'자기관리능력':['경영·기획','행정·사무']
+};
+
+const defaultConfig={
+ schoolName:'인천정각중학교', region:'인천광역시', grade:'3', sessions:'2',
+ careerSiteName:'인천사이버진로교육원', careerSiteUrl:CAREER_URL_DEFAULT,
+ highSchoolSiteName:'인천광역시교육청 고등학교 입학전형 포털', highSchoolSiteUrl:INCHEON_HS_URL_DEFAULT,
+ majorSiteName:'커리어넷 학과정보', majorSiteUrl:MAJOR_URL_DEFAULT,
+ modules:{self:true,career:true,highschool:true,major:true,future:true,requestion:true},
+ majorLevel:'basic',
+ highSchools:[],
+ note:'고교 정보는 해당 학년도 교육청 공식자료로 확인하세요.'
+};
+function encodeConfigForLink(obj){
+  const json=JSON.stringify(obj);
+  const bytes=new TextEncoder().encode(json);
+  let bin=''; bytes.forEach(b=>bin+=String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeConfigFromLink(token){
+  try{
+    let b64=token.replace(/-/g,'+').replace(/_/g,'/');
+    while(b64.length%4)b64+='=';
+    const bin=atob(b64); const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }catch(e){return null}
+}
+function sharedConfigFromURL(){
+  const m=location.hash.match(/(?:^#|&)cfg=([^&]+)/);
+  return m?decodeConfigFromLink(m[1]):null;
+}
+const sharedConfig=sharedConfigFromURL();
+let config=sharedConfig?Object.assign(structuredClone(defaultConfig),sharedConfig):loadJSON('careerGPS_config',defaultConfig);
+let state=loadJSON('careerGPS_student',freshState());
+let step=1;
+
+function freshState(){return {meta:{grade:'3',classNo:'',number:'',name:''},startQuestion:'',interest:['',''],aptitude:['',''],values:['','',''],otherValue:'',entre:['','',''],strength:'',signal:[],career:{name:'',work:'',ability:'',prep:'',connect:''},hs:{route:'',a:{name:'',point1:'',point2:'',fit:''},b:{name:'',point1:'',point2:'',fit:''},choice:'',reason:''},major:{candidates:'',selected:'',learning:'',universities:'',reason:''},future:{generated:'',reaction:'',edited:''},requestion:'',nextStep:'',completed:false,lastStep:1,updatedAt:null};}
+function loadJSON(k,d){try{const v=localStorage.getItem(k);return v?Object.assign(structuredClone(d),JSON.parse(v)):structuredClone(d)}catch(e){return structuredClone(d)}}
+function saveState(){state.updatedAt=new Date().toISOString();state.lastStep=step;localStorage.setItem('careerGPS_student',JSON.stringify(state));const el=document.getElementById('autosaveState');if(el){el.textContent='자동저장됨 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}}
+function saveConfig(){localStorage.setItem('careerGPS_config',JSON.stringify(config));toast('교사용 설정을 저장했습니다.')}
+function esc(s=''){return String(s).replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]))}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600)}
+function show(id){['home','studentApp','teacherApp'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));document.getElementById('globalActions').classList.toggle('hidden',id==='home')}
+function goHome(){saveState();show('home')}
+
+function startStudent(){
+  if(state.updatedAt && !state.completed && (state.startQuestion||state.strength||state.career.name)){
+    modal(`<h2>작성 중인 Career GPS가 있어요.</h2><div class="resume-summary">마지막 저장: ${new Date(state.updatedAt).toLocaleString('ko-KR')}<br>진행 위치: STEP ${state.lastStep||1}</div><p>지난 시간에 하던 곳부터 이어서 할까요?</p><div class="nav-row"><button type="button" class="btn danger" id="restartStudentBtn">처음부터</button><button type="button" class="btn primary" id="resumeStudentBtn">이어서 하기</button></div>`);
+    const restartBtn=document.getElementById('restartStudentBtn');
+    const resumeBtn=document.getElementById('resumeStudentBtn');
+    if(restartBtn) restartBtn.addEventListener('click', resetStudentFromModal);
+    if(resumeBtn) resumeBtn.addEventListener('click', resumeStudent);
+  }else{resumeStudent()}
+}
+function resumeStudent(){closeModal();step=Math.min(Math.max(state.lastStep||1,1),8);show('studentApp');if(state.completed){renderResult()}else{step=normalizeStep(step,1);renderStep()}}
+function resetStudentFromModal(){
+  // 모달 안에서 confirm()이 브라우저/임베드 환경에 의해 막히는 경우가 있어
+  // 확인 단계를 모달 자체에서 처리한다.
+  modal(`<h2>정말 처음부터 시작할까요?</h2><p>현재 작성한 Career GPS 내용이 이 브라우저에서 삭제됩니다.</p><div class="nav-row"><button type="button" class="btn ghost" id="cancelResetBtn">취소</button><button type="button" class="btn danger" id="confirmResetBtn">네, 처음부터 시작</button></div>`);
+  document.getElementById('cancelResetBtn').addEventListener('click', startStudent);
+  document.getElementById('confirmResetBtn').addEventListener('click', newStudent);
+}
+function newStudent(){
+  state=freshState();step=1;saveState();closeModal();show('studentApp');renderStep();toast('새 Career GPS를 시작합니다.');
+}
+function modal(html){document.getElementById('modalRoot').innerHTML=`<div class="modal"><div class="modal-box">${html}</div></div>`}
+function closeModal(){document.getElementById('modalRoot').innerHTML=''}
+
+function updateProgress(){const labels=['처음의 질문','나의 좌표','Career Signal','직업 탐색','학과 탐색','우리 지역 고교탐색','FUTURE ME','다시 묻다 · 완성'];document.getElementById('progressLabel').textContent=`STEP ${step} / 8 · ${labels[step-1]}`;document.getElementById('progressBar').style.width=(step/8*100)+'%'}
+function renderStep(){updateProgress();const c=document.getElementById('stepContainer');c.innerHTML=stepRenderer[step]();wireAutoSave();window.scrollTo({top:0,behavior:'smooth'})}
+function wireAutoSave(){document.querySelectorAll('#stepContainer input,#stepContainer select,#stepContainer textarea').forEach(el=>{el.addEventListener('input',()=>{syncCurrent();saveState()});el.addEventListener('change',()=>{syncCurrent();saveState()})})}
+function val(id){const e=document.getElementById(id);return e?e.value:''}
+function syncCurrent(){
+ if(step===1){state.meta={grade:val('sGrade'),classNo:val('sClass'),number:val('sNumber'),name:val('sName')};state.startQuestion=val('startQ')}
+ if(step===2){state.interest=[val('interest1'),val('interest2')];state.aptitude=[val('apt1'),val('apt2')];state.values=[val('value1'),val('value2'),val('value3')];state.otherValue=val('otherValue');state.entre=[val('entre1'),val('entre2'),val('entre3')];state.strength=val('strength')}
+ if(step===4){state.career={name:val('careerName'),work:val('careerWork'),ability:val('careerAbility'),prep:val('careerPrep'),connect:val('careerConnect')}}
+ if(step===5){state.major={candidates:val('majorCandidates'),selected:val('majorSelected'),learning:val('majorLearning'),universities:val('majorUniversities'),reason:val('majorReason')}}
+ if(step===6){state.hs.route=val('hsRoute');state.hs.a={name:val('hsA'),point1:val('hsA1'),point2:val('hsA2'),fit:val('hsAFit')};state.hs.b={name:val('hsB'),point1:val('hsB1'),point2:val('hsB2'),fit:val('hsBFit')};state.hs.choice=val('hsChoice');state.hs.reason=val('hsReason')}
+ if(step===7){state.future.reaction=val('futureReaction');state.future.edited=val('futureEdited')}
+ if(step===8){state.requestion=val('reQuestion');state.nextStep=val('nextStep')}
+}
+function uniqueNonEmpty(arr){const a=arr.filter(Boolean);return a.length===new Set(a).size}
+function validateStep(){syncCurrent();let msg='';
+ if(step===1 && !state.startQuestion.trim())msg='지금 진로에 대해 궁금한 질문을 한 문장으로 적어주세요.';
+ if(step===2){if(state.interest.some(x=>!x)||state.aptitude.some(x=>!x)||state.values.some(x=>!x)||state.entre.some(x=>!x)||!state.strength.trim())msg='나의 좌표 다섯 영역을 모두 입력해주세요.';else if(!uniqueNonEmpty(state.interest)||!uniqueNonEmpty(state.aptitude)||!uniqueNonEmpty(state.values)||!uniqueNonEmpty(state.entre))msg='같은 항목을 중복 선택하지 않도록 확인해주세요.'}
+ if(step===4 && (!state.career.name.trim()||!state.career.connect.trim()))msg='관심 직업과 나와 연결되는 이유를 입력해주세요.';
+ if(step===5 && config.modules.major && (!state.major.selected.trim()||!state.major.learning.trim()))msg='관심 학과와 그 학과에서 배우는 내용을 입력해주세요.';
+ if(step===6 && (!state.hs.route||!state.hs.a.name.trim()||!state.hs.b.name.trim()||!state.hs.choice||!state.hs.reason.trim()))msg='진학 경로, 비교할 두 학교, 현재 관심 선택과 이유를 입력해주세요.';
+ if(step===7 && config.modules.future && (!state.future.reaction||!state.future.edited.trim()))msg='FUTURE ME에 대한 생각을 선택하고 나의 말로 한 번 수정해주세요.';
+ if(step===8 && (!state.requestion.trim()||!state.nextStep.trim()))msg='새롭게 생긴 질문과 지금 할 작은 행동을 입력해주세요.';
+ if(msg){toast(msg);return false}return true}
+function stepEnabled(s){if(s===2||s===3)return config.modules.self!==false;if(s===4)return config.modules.career!==false;if(s===5)return config.modules.major!==false;if(s===6)return config.modules.highschool!==false;if(s===7)return config.modules.future!==false;if(s===8)return config.modules.requestion!==false;return true}
+function normalizeStep(s,dir=1){let x=s;while(x>=1&&x<=8&&!stepEnabled(x))x+=dir;return Math.min(8,Math.max(1,x))}
+function nextStep(){if(!validateStep())return; if(step===2)state.signal=makeSignal(); if(step===6 && config.modules.future!==false)state.future.generated=makeFuture(); saveState();step=normalizeStep(Math.min(8,step+1),1);saveState();renderStep()}
+function prevStep(){syncCurrent();saveState();step=normalizeStep(Math.max(1,step-1),-1);saveState();renderStep()}
+
+const selectOpts=(arr,val0='',placeholder='선택')=>`<option value="">${placeholder}</option>`+arr.map(x=>{const v=Array.isArray(x)?x[0]:x;const label=Array.isArray(x)?x[1]:x;return `<option value="${esc(v)}" ${v===val0?'selected':''}>${esc(label)}</option>`}).join('');
+const nav=(prev=true,next='다음 단계 →')=>`<div class="nav-row no-print">${prev?'<button class="btn" onclick="prevStep()">← 이전</button>':'<span></span>'}<button class="btn primary" onclick="nextStep()">${next}</button></div>`;
+function resourceBlock(name,url,caption){return `<div class="resource"><div><strong>${esc(name)}</strong><small>${esc(caption||'새 창에서 공식 자료를 확인합니다.')}</small></div><button class="btn soft" onclick="window.open('${esc(url)}','_blank','noopener')">열기 ↗</button></div>`}
+
+const stepRenderer={
+1:()=>`<div class="step-head"><div><div class="step-badge">START · 질문하기</div><h2>지금, 나의 진로에 어떤 질문이 있나요?</h2><p>Career GPS는 이 질문에서 출발합니다. 탐색을 마친 뒤 이 질문이 어떻게 달라졌는지 다시 확인할 거예요.</p></div><div class="time-chip">권장 3분</div></div>
+<div class="grid3"><div class="field"><label>학년</label><input id="sGrade" type="text" value="${esc(state.meta.grade||config.grade)}"></div><div class="field"><label>반</label><input id="sClass" type="text" value="${esc(state.meta.classNo)}" placeholder="예: 2"></div><div class="field"><label>번호</label><input id="sNumber" type="text" value="${esc(state.meta.number)}" placeholder="예: 15"></div></div>
+<div class="field"><label>이름 <span class="small">(선택)</span></label><input id="sName" type="text" value="${esc(state.meta.name)}" placeholder="결과물에 이름을 표시하고 싶을 때만 입력"></div>
+<div class="field"><label>❓ 지금 내가 진로에 대해 가장 궁금한 것은?</label><textarea id="startQ" placeholder="예: 내가 좋아하는 일을 하면서도 안정적으로 일할 수 있는 직업은 무엇일까?">${esc(state.startQuestion)}</textarea><div class="help">정답을 쓰는 칸이 아닙니다. 지금 진짜 궁금한 것을 적어보세요. “아직 무엇을 좋아하는지 모르겠다”도 좋은 출발 질문입니다.</div></div>${nav(false)}`,
+2:()=>`<div class="step-head"><div><div class="step-badge">STEP 1 · 나의 좌표</div><h2>지금까지 발견한 ‘나’를 한곳에 모아봅니다.</h2><p>새 검사를 하는 것이 아니라, 진로수업에서 이미 확인한 결과를 Career GPS의 출발 좌표로 불러오는 과정입니다.</p></div><div class="time-chip">권장 7분</div></div>
+<div class="notice green"><b>5개의 좌표</b> · 흥미는 무엇을 좋아하는지, 적성은 무엇을 잘할 가능성이 있는지, 가치는 일에서 무엇을 중요하게 보는지, 역량은 어떤 힘을 갖고 있는지, 강점 문장은 내가 나를 어떻게 보는지 보여줍니다.</div>
+<h3>❤️ 흥미 · 커리어넷 직업흥미검사(H) 1·2순위</h3><div class="grid2"><div class="field"><label>1순위</label><select id="interest1">${selectOpts(INTERESTS,state.interest[0])}</select></div><div class="field"><label>2순위</label><select id="interest2">${selectOpts(INTERESTS,state.interest[1])}</select></div></div>
+<h3>💪 적성 · 커리어넷 직업적성검사 1·2순위</h3><div class="grid2"><div class="field"><label>1순위</label><select id="apt1">${selectOpts(APTITUDES,state.aptitude[0])}</select></div><div class="field"><label>2순위</label><select id="apt2">${selectOpts(APTITUDES,state.aptitude[1])}</select></div></div>
+<h3>💎 직업가치관 · 중요한 가치 1·2·3순위</h3><div class="grid3">${[0,1,2].map((i)=>`<div class="field"><label>${i+1}순위</label><select id="value${i+1}">${selectOpts(VALUES,state.values[i])}</select></div>`).join('')}</div><div class="field"><label>직업가치관에서 ‘기타’를 선택한 경우</label><input id="otherValue" value="${esc(state.otherValue)}" placeholder="기타 내용을 직접 작성하세요"></div>
+<h3>🚀 YEEP 창업가정신 핵심역량 · 높은 점수 TOP3</h3><div class="grid3">${[0,1,2].map(i=>`<div class="field"><label>TOP ${i+1}</label><select id="entre${i+1}">${selectOpts(ENTRE,state.entre[i])}</select></div>`).join('')}</div>
+<h3>✨ 내가 생각하는 나 · 강점찾기 활동</h3><div class="field"><label>장점 3가지를 섞어 만든 ‘나를 정의하는 한 문장’</label><textarea id="strength" placeholder="예: 나는 사람의 이야기를 잘 듣고, 새로운 아이디어를 떠올리며, 맡은 일은 끝까지 해내는 사람이다.">${esc(state.strength)}</textarea></div>${nav()}`,
+3:()=>{if(!state.signal.length)state.signal=makeSignal();return `<div class="step-head"><div><div class="step-badge">STEP 2 · 연결하기</div><h2>🛰️ Career Signal</h2><p>다섯 개의 좌표에서 반복해서 나타나는 특징을 연결해 탐색할 방향을 찾아봅니다.</p></div><div class="time-chip">권장 5분</div></div>
+<div class="signal"><h2 style="margin-bottom:6px">지금의 나에게 잡힌 탐색 신호</h2><p>이것은 직업 추천 결과가 아니라, <b style="color:white">넓게 찾아볼 출발 방향</b>입니다.</p><div class="signal-tags">${state.signal.map(x=>`<span class="signal-tag">${esc(x)}</span>`).join('')}</div><p>흥미 <b>${esc(state.interest.join(' · '))}</b>, 적성 <b>${esc(state.aptitude.join(' · '))}</b>, 가치 <b>${esc(state.values.join(' · '))}</b>, 역량 <b>${esc(state.entre.join(' · '))}</b>를 함께 보았습니다.</p></div>
+<div class="notice warn">⚠️ 신호와 다른 분야가 더 끌려도 괜찮습니다. 진로는 검사 결과에 맞추는 것이 아니라, <b>정보를 참고해 내가 탐색하고 선택하는 과정</b>입니다.</div>
+<div class="field"><label>나를 정의하는 문장을 다시 읽어보세요.</label><div class="quote">“${esc(state.strength)}”</div></div>
+${nav(true,'직업 탐색으로 →')}`},
+4:()=>`<div class="step-head"><div><div class="step-badge">STEP 3 · 탐구하기</div><h2>관심 직업 하나를 깊게 들여다봅니다.</h2><p>Career Signal을 참고하되, 실제로 내가 궁금한 직업을 선택하세요.</p></div><div class="time-chip">권장 20분</div></div>
+${resourceBlock(config.careerSiteName,config.careerSiteUrl,`${config.region} 지역 진로자원에서 직업 정보를 찾아보세요.`)}
+<div class="route">${state.signal.map(x=>`<span>${esc(x)}</span>`).join('<b>·</b>')}</div>
+<div class="grid2"><div class="field"><label>💼 내가 선택한 관심 직업</label><input id="careerName" value="${esc(state.career.name)}" placeholder="예: UX 디자이너"></div><div class="field"><label>이 직업에서 중요한 능력·태도</label><input id="careerAbility" value="${esc(state.career.ability)}" placeholder="예: 관찰력, 디자인 능력, 소통"></div></div>
+<div class="field"><label>진로 관련 탐색 내용을 요약해서 작성하세요.</label><textarea id="careerWork" placeholder="직업개요, 하는 일 등 찾아본 내용을 1~2문장으로 간단히 요약하세요.">${esc(state.career.work)}</textarea></div>
+<div class="field"><label>준비방법을 요약해서 간단하게 작성하세요.</label><textarea id="careerPrep" placeholder="정규교육과정, 자격증, 취업방법 등 준비방법을 간단히 요약하세요.">${esc(state.career.prep)}</textarea></div>
+<div class="field"><label>🔗 이 직업이 ‘나의 좌표’와 연결되는 점은?</label><textarea id="careerConnect" placeholder="직업개요를 읽은 후, 흥미·적성·가치·역량 중 관련되어 보이는 것을 작성하세요.">${esc(state.career.connect)}</textarea></div>${nav()}`,
+5:()=>{if(!config.modules.major){return `<div class="step-head"><div><div class="step-badge">STEP 4 · 선택 모듈</div><h2>학과 탐색은 이번 설정에서 생략합니다.</h2><p>교사가 학과 탐색 모듈을 OFF로 설정했습니다.</p></div></div>${nav()}`}
+return `<div class="step-head"><div><div class="step-badge">STEP 4 · 경로 연결</div><h2>🎓 대학에 진학한다면, 어떤 학과가 연결될까요?</h2><p>대학을 고르는 활동이 아닙니다. <b>관심 직업과 ‘무엇을 배우는 학과’가 연결되는지</b> 짧게 확인합니다.</p></div><div class="time-chip">권장 8분</div></div>
+<div class="notice warn">💡 하나의 직업으로 가는 길은 하나가 아닙니다. 같은 직업도 여러 학과에서 연결될 수 있고, 같은 학과에서도 여러 직업으로 나아갈 수 있습니다.</div>
+${resourceBlock(config.majorSiteName,config.majorSiteUrl,'관련 학과와 학과에서 배우는 내용, 개설대학을 확인해보세요.')}
+<div class="field"><label>관심 직업</label><input value="${esc(state.career.name)}" disabled></div>
+<div class="field"><label>찾아본 관련 학과 2~3개</label><input id="majorCandidates" value="${esc(state.major.candidates)}" placeholder="예: 소프트웨어학과, 컴퓨터공학과, 게임공학과"></div>
+<div class="grid2"><div class="field"><label>⭐ 지금 가장 관심 가는 학과 하나</label><input id="majorSelected" value="${esc(state.major.selected)}" placeholder="예: 소프트웨어학과"></div><div class="field"><label>개설대학 예시 <span class="small">(1~3개, 선택)</span></label><input id="majorUniversities" value="${esc(state.major.universities)}" placeholder="찾아본 대학명을 적어도 됩니다"></div></div>
+<div class="field"><label>이 학과에서는 무엇을 배우나요?</label><textarea id="majorLearning" placeholder="핵심만 1~2문장">${esc(state.major.learning)}</textarea></div>
+<div class="field"><label>이 학과가 궁금한 이유 <span class="small">(짧게)</span></label><input id="majorReason" value="${esc(state.major.reason)}" placeholder="예: 관심 직업에 필요한 프로그래밍을 배우고 싶어서"></div>${nav()}`},
+6:()=>{const routeHelp=state.hs.route==='직업계고·마이스터고'?'학과 · 배우는 내용 · 자격증/실습 · 취업·진학경로 · 나와의 연결':state.hs.route==='특목고·자사고'?'특화 교육과정 · 지원요건/전형 확인 · 학교 활동 · 나와의 연결':state.hs.route==='일반고'?'통학 · 교육과정/선택과목 · 진로활동 · 나와의 연결':'학교 유형 · 교육과정 · 통학/환경 · 나와의 연결';return `<div class="step-head"><div><div class="step-badge">STEP 5 · 세상으로</div><h2>🏫 우리 지역의 실제 고교를 비교합니다.</h2><p>‘좋은 학교’를 고르는 활동이 아니라, <b>현재의 나에게 어떤 경험을 제공하는 학교인지</b> 비교합니다.</p></div><div class="time-chip">권장 18분</div></div>
+${resourceBlock(config.highSchoolSiteName,config.highSchoolSiteUrl,`${config.region}의 최신 고입·학교 정보를 공식 자료에서 확인하세요.`)}
+${resourceBlock('학교알리미',SCHOOLINFO_URL,'학교알리미 학교별 공시정보에서 각 학교의 교육과정, 학교 운영 등 정보를 활용하세요.')}
+<div class="field"><label>내가 지금 탐색할 고교 경로</label><select id="hsRoute" onchange="syncCurrent();saveState();renderStep()"><option value="">선택</option>${['일반고','직업계고·마이스터고','특목고·자사고','아직 모르겠음'].map(x=>`<option ${state.hs.route===x?'selected':''}>${x}</option>`).join('')}</select><div class="help">비교할 때 살펴볼 기준: <b>${routeHelp}</b></div></div>
+<datalist id="hsList">${config.highSchools.map(s=>`<option value="${esc(s.name||s)}">`).join('')}</datalist>
+<div class="grid2"><div class="school-card"><h3>학교 A</h3><div class="field"><label>학교명</label><input id="hsA" list="hsList" value="${esc(state.hs.a.name)}" placeholder="공식자료에서 찾은 학교"></div><div class="field"><label>눈에 띈 정보 ①</label><input id="hsA1" value="${esc(state.hs.a.point1)}" placeholder="예: 선택과목/학과/특화 프로그램"></div><div class="field"><label>눈에 띈 정보 ②</label><input id="hsA2" value="${esc(state.hs.a.point2)}" placeholder="예: 통학/동아리/실습"></div><div class="field"><label>나와 연결되는 점</label><textarea id="hsAFit" placeholder="나의 관심 직업이나 좌표와 연결">${esc(state.hs.a.fit)}</textarea></div></div>
+<div class="school-card"><h3>학교 B</h3><div class="field"><label>학교명</label><input id="hsB" list="hsList" value="${esc(state.hs.b.name)}" placeholder="공식자료에서 찾은 학교"></div><div class="field"><label>눈에 띈 정보 ①</label><input id="hsB1" value="${esc(state.hs.b.point1)}" placeholder="예: 선택과목/학과/특화 프로그램"></div><div class="field"><label>눈에 띈 정보 ②</label><input id="hsB2" value="${esc(state.hs.b.point2)}" placeholder="예: 통학/동아리/실습"></div><div class="field"><label>나와 연결되는 점</label><textarea id="hsBFit" placeholder="나의 관심 직업이나 좌표와 연결">${esc(state.hs.b.fit)}</textarea></div></div></div>
+<div class="field"><label>현재 더 알아보고 싶은 학교</label><select id="hsChoice"><option value="">선택</option><option ${state.hs.choice==='A'?'selected':''} value="A">학교 A</option><option ${state.hs.choice==='B'?'selected':''} value="B">학교 B</option><option ${state.hs.choice==='둘 다 더 탐색'?'selected':''}>둘 다 더 탐색</option><option ${state.hs.choice==='아직 모르겠음'?'selected':''}>아직 모르겠음</option></select></div><div class="field"><label>왜 그렇게 생각했나요?</label><textarea id="hsReason">${esc(state.hs.reason)}</textarea></div>${nav()}`},
+7:()=>{if(!state.future.generated)state.future.generated=makeFuture();return `<div class="step-head"><div><div class="step-badge">STEP 6 · 미래 상상</div><h2>🚀 FUTURE ME</h2><p>지금까지 선택한 정보를 이어 하나의 <b>가능한 미래 시나리오</b>를 만들어 봅니다. 예측도, 판정도 아닙니다.</p></div><div class="time-chip">권장 7분</div></div>
+<div class="signal"><div class="eyebrow" style="color:#bfc9ff">2036 · ONE POSSIBLE STORY</div><p style="font-size:18px;color:white;line-height:1.7;margin-top:12px">${esc(state.future.generated)}</p></div>
+<div class="field"><label>이 시나리오에 대한 나의 생각</label><select id="futureReaction"><option value="">선택</option>${['마음에 든다','일부만 맞는다','나는 다르게 생각한다'].map(x=>`<option ${state.future.reaction===x?'selected':''}>${x}</option>`).join('')}</select></div>
+<div class="field"><label>✍️ 위의 가상 시나리오를 적절하게 활용하고, 추가하고 싶은 내용을 더해 ‘나의 미래’를 작성해보세요.</label><textarea id="futureEdited" placeholder="가상 시나리오에서 마음에 드는 내용을 활용하고, 내가 바꾸거나 더하고 싶은 내용을 함께 작성하세요.">${esc(state.future.edited)}</textarea></div>${nav()}`},
+8:()=>`<div class="step-head"><div><div class="step-badge">STEP 7 · 다시 묻다</div><h2>탐색을 마친 지금, 처음과 다른 질문이 생겼나요?</h2><p>목적지를 찾는 것으로 끝나지 않습니다. Career GPS의 마지막은 <b>새로운 질문과 다음 행동</b>입니다.</p></div><div class="time-chip">권장 10분</div></div>
+<div class="field"><label>처음의 질문</label><div class="quote">“${esc(state.startQuestion)}”</div></div>
+<div class="field"><label>🔄 지금 새롭게 생긴 진로 질문</label><textarea id="reQuestion" placeholder="예: 내가 관심 있는 분야를 경험하려면 고등학교에서 어떤 과목과 활동을 선택해야 할까?">${esc(state.requestion)}</textarea></div>
+<div class="field"><label>👣 지금 내가 해볼 작은 행동 하나</label><input id="nextStep" value="${esc(state.nextStep)}" placeholder="예: 관심 학교의 교육과정에서 관련 선택과목 2개 찾아보기"></div>
+<div class="notice green"><b>목적지를 찾았습니다.</b> 아니요. 어쩌면 새로운 출발점을 찾은 것인지도 모릅니다. 지금, 나의 미래에 다시 질문합니다.</div>
+<div class="nav-row no-print"><button class="btn" onclick="prevStep()">← 이전</button><button class="btn green" onclick="finishGPS()">🧭 MY CAREER GPS 완성하기</button></div>`
+};
+
+function makeSignal(){
+ const score={}; const add=(k,n=1)=>score[k]=(score[k]||0)+n;
+ state.interest.forEach((k,i)=>(signalMaps[k]||[]).forEach((x,j)=>add(x,(2-i)*(j===0?2:1))));
+ state.aptitude.forEach((k,i)=>(aptitudeMaps[k]||[]).forEach((x,j)=>add(x,(2-i)*(j===0?2:1))));
+ const valueBoost={'사회봉사':['교육·상담','보건·복지','공공·리더십'],'자아실현':['창업·기획','콘텐츠·디자인','과학·연구'],'사회적 인정':['경영·기획','공공·리더십'],'안정성·지속성':['행정·사무','보건·복지'],'흥미':['콘텐츠·디자인','문화·예술'],'적성':['기술·제작','과학·연구'],'보수':['경영·기획','금융·회계']};
+ state.values.slice(0,2).forEach(v=>(valueBoost[v]||[]).forEach(x=>add(x,1)));
+ const entreBoost={'혁신성':['창업·기획','콘텐츠·디자인'],'사회적 가치 지향':['공공·리더십','보건·복지'],'변화민첩성':['창업·기획','콘텐츠·미디어'],'성취지향성':['경영·기획','공공·리더십'],'위험감수역량':['창업·기획'],'회복탄력성':['교육·성장','현장·안전'],'자율성':['창작·미디어','창업·기획'],'자기관리역량':['행정·사무','경영·기획'],'끈기':['과학·연구','기술·제작'],'공동의사결정':['교육·상담','경영·기획'],'자원연계역량':['경영·기획','소통·서비스'],'협력성':['교육·상담','보건·복지']};
+ state.entre.forEach(v=>(entreBoost[v]||[]).forEach(x=>add(x,1)));
+ const arr=Object.entries(score).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+ return [...new Set(arr)].slice(0,3).length?[...new Set(arr)].slice(0,3):['사람과 사회','문제 해결','새로운 경험'];
+}
+function makeFuture(){const career=state.career.name||'관심 분야';const school=state.hs.choice==='A'?state.hs.a.name:state.hs.choice==='B'?state.hs.b.name:'고등학교';const major=config.modules.major&&state.major.selected?state.major.selected:'관심 분야의 공부';const strength=state.strength||'나의 강점';return `2036년의 나는 ${career}와 연결된 분야에서 경험을 쌓고 있을 수 있습니다. ${school||'고등학교'}에서 여러 과목과 활동을 경험하고, 이후 ${major} 같은 배움을 선택할 수도 있습니다. 그 과정에서 “${strength}”라는 지금의 강점이 새로운 문제를 해결하거나 다른 사람과 협력하는 데 쓰일 수 있습니다. 하지만 이 경로는 여러 가능성 중 하나이며, 실제 미래는 앞으로의 경험과 선택에 따라 달라질 수 있습니다.`}
+function finishGPS(){if(!validateStep())return;state.completed=true;saveState();renderResult()}
+function renderResult(){show('studentApp');document.getElementById('progressLabel').textContent='MY CAREER GPS · 완성';document.getElementById('progressBar').style.width='100%';const hsChoice=state.hs.choice==='A'?state.hs.a.name:state.hs.choice==='B'?state.hs.b.name:state.hs.choice;document.getElementById('stepContainer').innerHTML=`<div class="no-print" style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:16px"><div><h2 style="margin:0">🎉 Career GPS 완성!</h2><p>완성된 Career GPS를 PDF 파일로 바로 저장할 수 있습니다.</p></div><div class="inline"><button class="btn" onclick="downloadStudentBackup()">백업 저장</button><button class="btn primary" id="pdfDownloadBtn" onclick="downloadCareerPDF()">📄 내 Career GPS PDF로 저장</button></div></div>
+<div class="result-sheet" id="careerGpsResult">
+ <div class="result-title"><div><div class="eyebrow">MY CAREER GPS</div><h2>${esc(state.meta.name||'나')}의 진로 경로</h2><div class="small">${esc(config.schoolName)} · ${esc(state.meta.grade)}학년 ${esc(state.meta.classNo)}반 ${esc(state.meta.number)}번</div></div><div class="gps-mascot" aria-label="Career GPS 나침반 캐릭터"><div class="gps-face">•ᴗ•</div></div></div>
+ <div class="quote">처음의 질문 · “${esc(state.startQuestion)}”</div>
+ <h3 style="margin-top:22px">📍 MY COORDINATES</h3><div class="coord-grid">
+  <div class="coord"><b>❤️ 흥미</b><div>${esc(state.interest.join(' · '))}</div></div>
+  <div class="coord"><b>💪 적성</b><div>${esc(state.aptitude.join(' · '))}</div></div>
+  <div class="coord"><b>💎 가치</b><div>${esc(state.values.join(' · '))}</div></div>
+  <div class="coord"><b>🚀 역량</b><div>${esc(state.entre.join(' · '))}</div></div>
+  <div class="coord"><b>✨ 강점</b><div>${esc(state.strength)}</div></div>
+ </div>
+ <div class="path-line"><div class="path-icon">🛰️</div><div><b>CAREER SIGNAL</b><p>${state.signal.map(esc).join(' · ')}</p></div></div>
+ <div class="path-line"><div class="path-icon">💼</div><div><b>MY CAREER</b><p><strong>${esc(state.career.name)}</strong> · ${esc(state.career.connect)}${state.career.prep?`<br><span class="small">준비방법: ${esc(state.career.prep)}</span>`:''}</p></div></div>
+ ${config.modules.major?`<div class="path-line"><div class="path-icon">🎓</div><div><b>MY MAJOR</b><p><strong>${esc(state.major.selected)}</strong> · ${esc(state.major.learning)}${state.major.universities?`<br><span class="small">개설대학 예시: ${esc(state.major.universities)}</span>`:''}</p></div></div>`:''}
+ <div class="path-line"><div class="path-icon">🏫</div><div><b>MY HIGH SCHOOL ROUTE</b><p>${esc(state.hs.a.name)} ↔ ${esc(state.hs.b.name)}<br>현재 더 알아보고 싶은 곳: <strong>${esc(hsChoice)}</strong> · ${esc(state.hs.reason)}</p></div></div>
+ <div class="path-line"><div class="path-icon">🚀</div><div><b>FUTURE ME 2036</b><p>${esc(state.future.edited||state.future.generated)}</p></div></div>
+ <div class="path-line"><div class="path-icon">❓</div><div><b>RE:QUESTION</b><p><span class="small">처음</span> “${esc(state.startQuestion)}”<br><span class="small">탐색 후</span> <strong>“${esc(state.requestion)}”</strong></p></div></div>
+ <div class="path-line"><div class="path-icon">👣</div><div><b>MY NEXT STEP</b><p><strong>${esc(state.nextStep)}</strong></p></div></div>
+ <div class="notice green" style="margin-top:20px">Career GPS의 경로는 확정된 미래가 아닙니다. 오늘의 탐색을 바탕으로 앞으로도 경험하고, 선택하고, 다시 질문하세요.</div>
+</div>
+<div class="nav-row no-print"><button class="btn" onclick="step=8;state.completed=false;saveState();renderStep()">내용 수정하기</button><button class="btn danger" onclick="newStudent()">새 Career GPS 시작</button></div>`}
+
+async function downloadCareerPDF(){
+  const btn=document.getElementById('pdfDownloadBtn');
+  const target=document.getElementById('careerGpsResult');
+  if(!target)return;
+  if(typeof html2canvas==='undefined'||!window.jspdf||!window.jspdf.jsPDF){
+    alert('PDF 저장 기능을 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 페이지를 새로고침해 주세요.');
+    return;
+  }
+  const oldText=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='PDF 만드는 중…';}
+  try{
+    await document.fonts?.ready;
+    target.classList.add('pdf-export');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const canvas=await html2canvas(target,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false,windowWidth:1000,scrollX:0,scrollY:0});
+    target.classList.remove('pdf-export');
+    const img=canvas.toDataURL('image/jpeg',0.96);
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
+    const pageW=210,pageH=297,margin=8;
+    const maxW=pageW-margin*2,maxH=pageH-margin*2;
+    const ratio=Math.min(maxW/canvas.width,maxH/canvas.height);
+    const w=canvas.width*ratio,h=canvas.height*ratio;
+    const x=(pageW-w)/2,y=(pageH-h)/2;
+    pdf.addImage(img,'JPEG',x,y,w,h,undefined,'FAST');
+    const safe=v=>String(v||'').trim().replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,'_');
+    const parts=['Career_GPS',state.meta.grade?`${safe(state.meta.grade)}학년`:'',state.meta.classNo?`${safe(state.meta.classNo)}반`:'',state.meta.number?`${safe(state.meta.number)}번`:'',safe(state.meta.name)].filter(Boolean);
+    const filename=parts.join('_')+'.pdf';
+    const blob=pdf.output('blob');
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=filename;
+    a.style.display='none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),15000);
+    toast('PDF 다운로드를 시작했습니다.');
+  }catch(err){
+    target.classList.remove('pdf-export');
+    console.error(err);
+    alert('PDF를 만드는 중 오류가 발생했습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=oldText||'📄 내 Career GPS PDF로 저장';}
+  }
+}
+
+function downloadStudentBackup(){saveState();downloadJSON(state,`CareerGPS_${state.meta.classNo||'반'}-${state.meta.number||'번호'}_${new Date().toISOString().slice(0,10)}.json`)}
+function importStudentBackup(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{state=Object.assign(freshState(),JSON.parse(r.result));step=state.lastStep||1;saveState();show('studentApp');state.completed?renderResult():renderStep();toast('백업을 불러왔습니다.')}catch(e){alert('Career GPS 백업 파일을 읽지 못했습니다.')}};r.readAsText(f,'utf-8');ev.target.value=''}
+function downloadJSON(obj,name){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+
+function openTeacher(){show('teacherApp');renderTeacher()}
+function renderTeacher(){const el=document.getElementById('teacherApp');el.innerHTML=`<div class="step-head"><div><div class="step-badge">TEACHER MODE</div><h2>교사용 Career GPS 설정</h2><p>학생용 화면은 단순하게, 교사용 설정은 지역과 수업 여건에 맞게 바꿀 수 있습니다.</p></div><button class="btn soft" onclick="applyQuickIncheon()">인천정각중 기본값</button></div>
+<div class="notice warn">학생 개인정보를 서버로 전송하지 않습니다. 교사가 만든 <b>학생용 링크에는 수업 설정만 포함</b>되며, 학생이 작성한 이름·검사결과·탐색 내용은 각 학생의 브라우저에 저장됩니다.</div>
+<div class="teacher-section"><h3>1. 기본 수업 설정</h3><div class="grid3"><div class="field"><label>지역</label><input id="tRegion" value="${esc(config.region)}"></div><div class="field"><label>학교명</label><input id="tSchool" value="${esc(config.schoolName)}"></div><div class="field"><label>대상 학년</label><input id="tGrade" value="${esc(config.grade)}"></div></div><div class="field"><label>권장 수업 차시</label><select id="tSessions">${['1','2','3'].map(x=>`<option ${config.sessions===x?'selected':''} value="${x}">${x}차시</option>`).join('')}</select><div class="help">현재 구성(직업+고교+간단 학과+FUTURE ME)은 2차시 85~90분을 권장합니다.</div></div></div>
+<div class="teacher-section"><h3>2. 사용할 모듈</h3>${[['self','자기이해'],['career','직업탐색'],['highschool','우리 지역 고교탐색'],['major','학과·개설대학 간단탐색'],['future','FUTURE ME'],['requestion','다시 묻다']].map(([k,l])=>`<div class="switch-row"><div><b>${l}</b></div><div class="switch ${config.modules[k]?'on':''}" data-module="${k}" onclick="this.classList.toggle('on')"><i></i></div></div>`).join('')}</div>
+<div class="teacher-section"><h3>3. 지역 진로자원</h3><div class="grid2"><div class="field"><label>사이트명</label><input id="tCareerName" value="${esc(config.careerSiteName)}"></div><div class="field"><label>링크</label><input id="tCareerUrl" value="${esc(config.careerSiteUrl)}"></div></div></div>
+<div class="teacher-section"><h3>4. 우리 지역 고교탐색 설정</h3><div class="grid2"><div class="field"><label>공식 고교정보/고입 사이트명</label><input id="tHSName" value="${esc(config.highSchoolSiteName)}"></div><div class="field"><label>링크</label><input id="tHSUrl" value="${esc(config.highSchoolSiteUrl)}"></div></div><div class="field"><label>학교명 빠른목록 <span class="small">(선택, 한 줄에 한 학교)</span></label><textarea id="tHSList" placeholder="학생이 입력할 때 자동완성 후보로만 사용됩니다.\n예:\n○○고등학교\n△△고등학교">${esc(config.highSchools.map(x=>x.name||x).join('\n'))}</textarea><div class="help">학교군·전형·모집 정보는 수시로 바뀔 수 있으므로 프로그램에 판정 규칙을 고정하지 않습니다. 해당 학년도 교육청 공식자료로 확인하게 합니다.</div></div></div>
+<div class="teacher-section"><h3>5. 학과탐색 설정</h3><div class="grid2"><div class="field"><label>학과정보 사이트명</label><input id="tMajorName" value="${esc(config.majorSiteName)}"></div><div class="field"><label>링크</label><input id="tMajorUrl" value="${esc(config.majorSiteUrl)}"></div></div><div class="field"><label>탐색 수준</label><select id="tMajorLevel"><option value="basic" ${config.majorLevel==='basic'?'selected':''}>간단탐색 5~10분 · 관련학과→배우는 내용→개설대학</option><option value="deep" ${config.majorLevel==='deep'?'selected':''}>자세히 탐색 20~30분</option></select></div></div>
+<div class="teacher-section"><h3>6. 학생에게 배부하기</h3>
+<div class="notice"><b>교사별 설정을 담은 학생용 링크</b>를 만들 수 있습니다. 같은 시간에 여러 학교·여러 교사가 서로 다른 설정으로 사용해도 영향을 주지 않습니다.</div>
+<div class="inline" style="flex-wrap:wrap"><button class="btn primary" onclick="copyStudentLink()">🔗 학생용 링크 복사</button><button class="btn" onclick="showStudentQR()">▦ QR코드 만들기</button></div>
+<div class="help">학생은 이 링크나 QR로 접속하면 선생님이 정한 지역·학교·탐색 사이트·모듈 설정이 자동 적용됩니다. 학생 작성 내용은 링크에 포함되지 않습니다.</div></div>
+<div class="teacher-section"><h3>7. 설정 백업 / 다른 학교에서 재사용</h3><div class="inline" style="flex-wrap:wrap"><button class="btn" onclick="exportTeacherConfig()">⬇ 설정 파일 저장</button><label class="btn">⬆ 설정 파일 불러오기<input type="file" accept="application/json" style="display:none" onchange="importTeacherConfig(event)"></label><button class="btn" onclick="downloadSchoolTemplate()">학교목록 CSV 예시</button></div><div class="help">설정 JSON은 다음 수업이나 다른 기기에서 교사용 설정을 다시 불러올 때 사용할 수 있습니다.</div></div>
+<div class="nav-row"><button class="btn" onclick="goHome()">← 처음 화면</button><button class="btn primary" onclick="collectTeacher();saveConfig();renderTeacher()">설정 저장</button></div>`}
+function collectTeacher(){config.region=val('tRegion');config.schoolName=val('tSchool');config.grade=val('tGrade');config.sessions=val('tSessions');config.careerSiteName=val('tCareerName');config.careerSiteUrl=val('tCareerUrl');config.highSchoolSiteName=val('tHSName');config.highSchoolSiteUrl=val('tHSUrl');config.majorSiteName=val('tMajorName');config.majorSiteUrl=val('tMajorUrl');config.majorLevel=val('tMajorLevel');config.highSchools=val('tHSList').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map(name=>({name}));document.querySelectorAll('[data-module]').forEach(x=>config.modules[x.dataset.module]=x.classList.contains('on'))}
+function applyQuickIncheon(){config=structuredClone(defaultConfig);saveConfig();renderTeacher()}
+function makeStudentLink(){
+  collectTeacher(); saveConfig();
+  const base=location.origin+location.pathname;
+  return base+'#cfg='+encodeConfigForLink(config);
+}
+async function copyStudentLink(){
+  const link=makeStudentLink();
+  try{await navigator.clipboard.writeText(link);toast('학생용 링크를 복사했습니다.')}catch(e){
+    modal(`<h2>학생용 링크</h2><p>아래 주소를 복사해 학생에게 배부하세요.</p><textarea id="shareLinkBox" style="min-height:120px">${esc(link)}</textarea><div class="nav-row"><button class="btn primary" onclick="closeModal()">확인</button></div>`);
+    setTimeout(()=>{const x=document.getElementById('shareLinkBox');if(x){x.focus();x.select()}},50);
+  }
+}
+function showStudentQR(){
+  const link=makeStudentLink();
+  modal(`<h2>학생용 Career GPS QR</h2><p>${esc(config.schoolName||config.region||'수업')} 설정이 담긴 QR입니다. 학생이 촬영하면 같은 설정으로 시작합니다.</p><div id="teacherQR" style="display:flex;justify-content:center;padding:18px;background:#fff;border-radius:16px;margin:12px auto;max-width:300px"></div><div class="field"><label>학생용 링크</label><textarea id="qrLinkBox" readonly style="min-height:90px">${esc(link)}</textarea></div><div class="nav-row"><button class="btn" onclick="copyTextFrom('qrLinkBox')">링크 복사</button><button class="btn primary" onclick="closeModal()">닫기</button></div>`);
+  setTimeout(()=>{
+    const q=document.getElementById('teacherQR');
+    if(window.QRCode&&q){new QRCode(q,{text:link,width:240,height:240,correctLevel:QRCode.CorrectLevel.M})}
+    else if(q){q.innerHTML='<p>QR 라이브러리를 불러오지 못했습니다. 링크 복사를 이용하세요.</p>'}
+  },50);
+}
+async function copyTextFrom(id){const x=document.getElementById(id);if(!x)return;try{await navigator.clipboard.writeText(x.value);toast('링크를 복사했습니다.')}catch(e){x.focus();x.select();}}
+function exportTeacherConfig(){collectTeacher();saveConfig();downloadJSON(config,`CareerGPS_교사용설정_${config.region||'지역'}.json`)}
+function importTeacherConfig(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{config=Object.assign(structuredClone(defaultConfig),JSON.parse(r.result));saveConfig();renderTeacher();toast('교사용 설정을 불러왔습니다.')}catch(e){alert('설정 파일을 읽지 못했습니다.')}};r.readAsText(f,'utf-8')}
+function downloadSchoolTemplate(){const text='학교명,학교유형,메모\n예시고등학교,일반고,선택과목 확인\n예시직업고,직업계고,학과 확인\n';const blob=new Blob(['\ufeff'+text],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CareerGPS_지역고교목록_예시.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+</script>
+</body>
+</html>
